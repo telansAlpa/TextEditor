@@ -1,0 +1,115 @@
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.text.Font;
+
+import java.util.Collections;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.InlineCssTextArea;
+import org.fxmisc.richtext.GenericStyledArea;
+import org.fxmisc.richtext.InlineCssTextArea;
+
+public class Test extends Application {
+    private static InlineCssTextArea writingText = new InlineCssTextArea();
+    @Override
+    public void start(Stage stage) {
+        //Загрузка шрифтов
+        Font.loadFont(getClass().getResource("/TextStyle/Montserrat-Regular.ttf").toExternalForm(), 26);
+        Font.loadFont(getClass().getResource("/TextStyle/Montserrat-SemiBold.ttf").toExternalForm(), 26);
+        
+
+        //Внешний вид текста и заднего фона
+        writingText.setStyle("-fx-background-color: #333640; -fx-padding: 50 100 0 100; -fx-font-family: 'Montserrat Regular';");
+        writingText.setStyle(0 , 0 , "-fx-fill: #CDD0DD;-fx-font-size: 26px;");
+        writingText.setWrapText(true);
+
+
+
+        //Обработка ввода букв
+        writingText.textProperty().addListener((obs, oldText, newText) -> {
+            saveToFile(newText);
+
+        
+            Platform.runLater(() -> {
+                int currentLine = writingText.getCurrentParagraph();
+                int[] startEndLine = volumeLine(newText, currentLine);
+
+                if(startEndLine[0] != startEndLine[1]){
+                    String lineText = newText.substring(startEndLine[0], startEndLine[1]);;
+                    appChanges(startEndLine[0], startEndLine[1], lineText);
+                }
+    
+
+            });
+        });
+        
+        //Настройки сцены
+        VirtualizedScrollPane<InlineCssTextArea> write = new VirtualizedScrollPane<>(writingText);
+        Scene scene = new Scene(write);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+
+        //Загрузка сцены
+        stage.setScene(scene);
+        stage.setMaximized(true);
+        stage.setTitle("Пример RichTextFX");
+        stage.show();
+    }
+    private void saveToFile(String text) {
+        try (FileWriter writer = new FileWriter("a.txt")) {
+            writer.write(text);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    static char firstLetter;
+    private void appChanges(int start, int end, String lineText){
+        char firstLetter = lineText.charAt(0);
+        if(this.firstLetter != firstLetter){
+            this.firstLetter = firstLetter;
+            System.out.println(firstLetter);
+            if(firstLetter == '#'){
+                writingText.setStyle(start , end, "-fx-fill: #CDD0DD;-fx-font-size: 26px;-fx-font-family: 'Montserrat SemiBold'");
+            }
+            else{
+                writingText.setStyle(start , end, "-fx-fill: #CDD0DD;-fx-font-size: 26px; -fx-font-family: 'Montserrat Regular';");
+            }
+
+        }
+    }
+
+
+
+
+    private int[] volumeLine(String text, int currentLine){
+        int[] volume = new int[2];
+
+        for(int i = 0; i < text.length(); i++)
+        {
+            if(currentLine > 0 && text.charAt(i) == '\n'){
+                currentLine--;
+            }
+            else if(currentLine == -1){
+                volume[1] = i+1;
+                if(text.charAt(i) == '\n'){
+                    break;
+                }
+            }
+            else if(currentLine == 0){
+                volume[0] = i;
+                volume[1] = i+1;
+                currentLine--;
+            }
+        }
+        return volume;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
