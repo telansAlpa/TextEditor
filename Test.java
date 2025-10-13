@@ -20,8 +20,8 @@ public class Test extends Application {
     @Override
     public void start(Stage stage) {
         //Загрузка шрифтов
-        Font.loadFont(getClass().getResource("/TextStyle/Montserrat-Regular.ttf").toExternalForm(), 26);
-        Font.loadFont(getClass().getResource("/TextStyle/Montserrat-SemiBold.ttf").toExternalForm(), 26);
+        Font.loadFont(getClass().getResource("TextStyle/Montserrat-Regular.ttf").toExternalForm(), 26);
+        Font.loadFont(getClass().getResource("TextStyle/Montserrat-SemiBold.ttf").toExternalForm(), 26);
         
 
         //Внешний вид текста и заднего фона
@@ -52,7 +52,6 @@ public class Test extends Application {
         //Настройки сцены
         VirtualizedScrollPane<InlineCssTextArea> write = new VirtualizedScrollPane<>(writingText);
         Scene scene = new Scene(write);
-        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
 
         //Загрузка сцены
         stage.setScene(scene);
