@@ -35,13 +35,16 @@ public class Test extends Application {
         writingText.textProperty().addListener((obs, oldText, newText) -> {
             saveToFile(newText);
 
-        
+            
+
             int currentLine = writingText.getCurrentParagraph();
             int[] startEndLine = volumeLine(newText, currentLine);
 
 
             if(startEndLine[0] != startEndLine[1]){
                 String lineText = newText.substring(startEndLine[0], startEndLine[1]);
+                boolean thiscode = code(lineText);//Если мы хотим написать код возврашаят True
+                System.out.println(thiscode);
                 appChanges(startEndLine[0], startEndLine[1], lineText);
             }
     
@@ -58,6 +61,39 @@ public class Test extends Application {
         stage.setTitle("Пример RichTextFX");
         stage.show();
     }
+    static String[] format = {"java", "py"};
+    private boolean code(String text){
+        boolean match = false;
+        for (String word : format) {
+            String suffix = "." + word + ":";
+            if (text.endsWith(suffix)) {
+                int index = text.indexOf(suffix); // позиция точки перед расширением
+                if (index <= 0) { // имя пустое или точка на нулевой позиции -> неверно
+                    break;
+                }
+
+                String name = text.substring(0, index);
+
+                // inline-проверка: все ли символы в name — буквы
+                boolean onlyLetters = true;
+                for (int i = 0; i < name.length(); i++) {
+                    char c = name.charAt(i);
+                    if (!Character.isLetter(c)) { // проверяет латиницу и кириллицу
+                        onlyLetters = false;
+                        break;
+                    }
+                }
+
+                if (onlyLetters) {
+                    match = true;
+                }
+                break; // уже проверили подходящее расширение — выходим из цикла
+            }
+        }
+        return match;
+
+    }
+
     private void saveToFile(String text) {
         try (FileWriter writer = new FileWriter("a.txt")) {
             writer.write(text);
@@ -83,6 +119,7 @@ public class Test extends Application {
 
     private int[] volumeLine(String text, int currentLine){
         int[] volume = new int[2];
+        System.out.println(currentLine);
 
         for(int i = 0; i < text.length(); i++)
         {
@@ -105,6 +142,7 @@ public class Test extends Application {
                 }
             }
         }
+        System.out.println("V0: " + volume[0] +";V1: " + volume[1]);
         return volume;
     }
 
