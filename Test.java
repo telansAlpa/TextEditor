@@ -20,8 +20,8 @@ public class Test extends Application {
     @Override
     public void start(Stage stage) {
         //Загрузка шрифтов
-        Font.loadFont(getClass().getResource("TextStyle/Montserrat-Regular.ttf").toExternalForm(), 26);
-        Font.loadFont(getClass().getResource("TextStyle/Montserrat-SemiBold.ttf").toExternalForm(), 26);
+        Font.loadFont(getClass().getResource("/TextStyle/Montserrat-Regular.ttf").toExternalForm(), 26);
+        Font.loadFont(getClass().getResource("/TextStyle/Montserrat-SemiBold.ttf").toExternalForm(), 26);
         
 
         //Внешний вид текста и заднего фона
@@ -36,17 +36,16 @@ public class Test extends Application {
             saveToFile(newText);
 
         
-            Platform.runLater(() -> {
-                int currentLine = writingText.getCurrentParagraph();
-                int[] startEndLine = volumeLine(newText, currentLine);
+            int currentLine = writingText.getCurrentParagraph();
+            int[] startEndLine = volumeLine(newText, currentLine);
 
-                if(startEndLine[0] != startEndLine[1]){
-                    String lineText = newText.substring(startEndLine[0], startEndLine[1]);;
-                    appChanges(startEndLine[0], startEndLine[1], lineText);
-                }
+
+            if(startEndLine[0] != startEndLine[1]){
+                String lineText = newText.substring(startEndLine[0], startEndLine[1]);
+                appChanges(startEndLine[0], startEndLine[1], lineText);
+            }
     
 
-            });
         });
         
         //Настройки сцены
@@ -69,17 +68,14 @@ public class Test extends Application {
     static char firstLetter;
     private void appChanges(int start, int end, String lineText){
         char firstLetter = lineText.charAt(0);
-        if(this.firstLetter != firstLetter){
-            this.firstLetter = firstLetter;
-            System.out.println(firstLetter);
-            if(firstLetter == '#'){
-                writingText.setStyle(start , end, "-fx-fill: #CDD0DD;-fx-font-size: 26px;-fx-font-family: 'Montserrat SemiBold'");
-            }
-            else{
-                writingText.setStyle(start , end, "-fx-fill: #CDD0DD;-fx-font-size: 26px; -fx-font-family: 'Montserrat Regular';");
-            }
-
+        if(firstLetter == '#'){
+            writingText.setStyle(start , end, "-fx-fill: #CDD0DD;-fx-font-size: 26px;-fx-font-family: 'Montserrat SemiBold'");
         }
+        else if(this.firstLetter != firstLetter){
+            writingText.setStyle(start , end, "-fx-fill: #CDD0DD;-fx-font-size: 26px; -fx-font-family: 'Montserrat Regular';");
+        }
+        this.firstLetter = firstLetter;
+
     }
 
 
@@ -90,19 +86,23 @@ public class Test extends Application {
 
         for(int i = 0; i < text.length(); i++)
         {
+            //Доходим до нужной строки
             if(currentLine > 0 && text.charAt(i) == '\n'){
                 currentLine--;
             }
-            else if(currentLine == -1){
-                volume[1] = i+1;
-                if(text.charAt(i) == '\n'){
+            //Дошли до нужной строки
+            else{
+                if(text.charAt(i) == '\n'){ //Если начелась новая строка завершаем
                     break;
                 }
-            }
-            else if(currentLine == 0){
-                volume[0] = i;
-                volume[1] = i+1;
-                currentLine--;
+                else if(currentLine == 0){ //Начало нужной строки
+                    volume[0] = i;
+                    volume[1] = i+1;
+                    currentLine--;
+                }
+                else if(currentLine == -1){ //Продолжения нужной строки
+                    volume[1] = i+1;
+                }
             }
         }
         return volume;
