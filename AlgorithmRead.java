@@ -3,36 +3,40 @@ import java.util.List;
 
 class AlgorithmRead{
 	static String[] format = {"java", "py"}; //for code()
+    static List<Integer> linelist = new ArrayList<>(List.of(0)); //for volumeLine
 
-
-	//Разделяет весь написаный текст по строкам
-	int[] volumeLine(String text, int currentLine){
-        int[] volume = new int[2];
+	//Разделяет весь написаный текст по строкам (в linelist)
+	void volumeLine(String text, int currentLine){
+        int n = 0;
         System.out.println(currentLine);
 
-        for(int i = 0; i < text.length(); i++)
+        //Если новая строка снизу
+        for(int i = (linelist.size()-1); i < currentLine; i++){
+            linelist.add(text.length());
+        }
+        //Если изменения строки с середины
+        for(int i = linelist.get((currentLine)); i < text.length()-1; i++)// text.langth - 1, для выравнивания с индексом
         {
-            //Доходим до нужной строки
-            if(currentLine > 0 && text.charAt(i) == '\n'){
-                currentLine--;
-            }
-            //Дошли до нужной строки
-            else{
-                if(text.charAt(i) == '\n'){ //Если начелась новая строка завершаем
-                    break;
+            System.out.println("Start: " + i);
+            if(text.charAt(i) == '\n'){
+
+                n++;
+                if(n+currentLine <= linelist.size() -1){
+                    linelist.set(n+currentLine, i+1);
                 }
-                else if(currentLine == 0){ //Начало нужной строки
-                    volume[0] = i;
-                    volume[1] = i+1;
-                    currentLine--;
+                else{//Если новая строка в середине
+                    linelist.add(i+1);
+                    System.out.println("add");
                 }
-                else if(currentLine == -1){ //Продолжения нужной строки
-                    volume[1] = i+1;
-                }
+                //
             }
         }
-        System.out.println("V0: " + volume[0] +";V1: " + volume[1]);
-        return volume;
+        //Если удаления строки
+        for(int i = linelist.size(); i > currentLine + n +1; i--){
+            linelist.remove(i-1);
+        }
+        System.out.println(linelist);
+
     }
 
 	//Возварашяет true если написали например: (a.py)
@@ -41,7 +45,7 @@ class AlgorithmRead{
         for (String word : format) {
             String suffix = "." + word + ":";
             if (text.endsWith(suffix)) {
-                int index = text.indexOf(suffix); 
+                int index = text.indexOf(suffix);
                 if (index <= 0) {
                     break;
                 }

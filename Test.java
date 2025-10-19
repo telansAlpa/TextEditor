@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 
+
 import java.util.Collections;
 
 import java.io.FileWriter;
@@ -32,8 +33,6 @@ public class Test extends Application {
         writingText.setStyle(0 , 0 , "-fx-fill: #CDD0DD;-fx-font-size: 26px;");
         writingText.setWrapText(true);
 
-
-
         //Обработка ввода букв
         writingText.textProperty().addListener((obs, oldText, newText) -> {
             save.saveToFile(newText);
@@ -41,14 +40,14 @@ public class Test extends Application {
             
 
             int currentLine = writingText.getCurrentParagraph();
-            int[] startEndLine = check.volumeLine(newText, currentLine);
+            check.volumeLine(newText, currentLine);
+            int start = check.linelist.get(currentLine);
+            int end = (currentLine == (check.linelist.size()-1)) ? (newText.length()) : check.linelist.get(currentLine + 1) - 1;
 
-
-            if(startEndLine[0] != startEndLine[1]){
-                String lineText = newText.substring(startEndLine[0], startEndLine[1]);
+            if(start != end){
+                String lineText = newText.substring(start, end);
                 boolean thiscode = check.code(lineText);//Если мы хотим написать код возврашаят True
-                System.out.println(thiscode);
-                changes.appChanges(startEndLine[0], startEndLine[1], lineText, thiscode);
+                //changes.appChanges(start, end, lineText, thiscode);
             }
     
 
