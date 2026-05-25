@@ -29,7 +29,7 @@ LiteE предлагает:
    Для Mac/Linux:
    
 	# Компиляция
-	javac --module-path javafx-sdk-17.0.16/lib --add-modules javafx.controls -cp "libs/*" Test.java
+	javac --module-path javafx-sdk-17.0.16/lib \ --add-modules javafx.controls \ -cp "libs/*" *.java
 	# Запуск
 	java --module-path javafx-sdk-17.0.16/lib --add-modules javafx.controls -cp ".:libs/*" Test
    
@@ -37,7 +37,7 @@ LiteE предлагает:
    Для Windows:
 
 	#Компиляция
-	javac --module-path javafx-sdk-17.0.16\lib --add-modules javafx.controls -cp "libs/*" Test.java
+	javac --module-path javafx-sdk-17.0.16/lib \ --add-modules javafx.controls \ -cp "libs/*" *.java
     #Запуск
 	java --module-path javafx-sdk-17.0.16\lib --add-modules javafx.controls -cp ".;libs/*" Test
 
